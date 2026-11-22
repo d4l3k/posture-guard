@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application' version '9.4.1'
+}
+
+layout.buildDirectory = file('build/gradle')
+
+android {
+    namespace = 'com.d4l3k.postureguard'
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = 'com.d4l3k.postureguard'
+        minSdk = 29
+        targetSdk = 35
+        versionCode = (findProperty('versionCode') ?: '1') as int
+        versionName = "1.${versionCode}"
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+
+    signingConfigs {
+        release {
+            def ks = findProperty('keystore')
+            if (ks) {
+                storeFile = file(ks)
+                storePassword = file(findProperty('keystorePasswordFile')).text.trim()
+                keyAlias = 'posture'
+                keyPassword = storePassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = findProperty('keystore') ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
