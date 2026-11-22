@@ -1,6 +1,10 @@
-# Posture Guard
+# Anti Shrimp
 
-A small Android app that buzzes when you're holding your phone and looking way down at it, to nudge you toward holding it near eye level.
+*Better shrimpin' through chemistry.*
+
+<img src="docs/shrimp.gif" alt="Shrimp" width="300">
+
+**Posture Guard** is a small Android app that buzzes when you're holding your phone and looking way down at it, to nudge you toward holding it near eye level.
 
 ## How it works
 
@@ -22,7 +26,7 @@ Output: `build/posture-guard.apk`. Requires Gradle 9.x and Android SDK 36.
 
 ## Install
 
-Download `posture-guard.apk` from the [latest release](https://github.com/d4l3k/posture-guard/releases/latest). Requires Android 11+.
+Download `posture-guard.apk` from the [latest release](https://github.com/d4l3k/anti-shrimp/releases/latest). Requires Android 11+.
 
 ## License
 
