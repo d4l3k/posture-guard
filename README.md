@@ -5,7 +5,7 @@ A small Android app that buzzes when you're holding your phone and looking way d
 ## How it works
 
 - **Angle:** the accelerometer's gravity vector gives the angle between the screen and the horizontal. 0° is flat face-up (looking straight down), 90° is upright at eye level, and above 90° is tipped back overhead. Portrait and landscape are treated the same.
-- **In hand:** a hand-held phone always has a little tremor. The app tracks the RMS of the non-gravity acceleration, and a phone resting on a table or stand reads as still, so it doesn't trigger.
+- **In hand:** a hand-held phone always has a little tremor. The app tracks the RMS of the non-gravity acceleration (m/s²), and a phone resting on a table or stand reads as nearly still, so it doesn't trigger. Sensor noise varies by phone, so the threshold (default 0.12) is adjustable: put the phone on its stand and tap **Calibrate** to set it to twice the resting noise.
 - **Warning:** while the screen is on, if the phone is in hand and below the threshold (55° by default) for longer than the delay (5 s by default), it vibrates and posts a notification. The warning repeats every 20 s until you raise the phone.
 - The sensor is read only while the screen is on. Monitoring runs as a foreground service and restarts after reboot if it was enabled.
 

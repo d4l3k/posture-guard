@@ -18,16 +18,21 @@ public final class PostureDetector {
     private static final double GRAVITY_TAU_S = 0.4;
     /** Smoothing time constant of the motion RMS. */
     private static final double JITTER_TAU_S = 0.8;
-    /** Motion RMS (m/s²) above which the phone counts as in a hand. */
-    public static final double HELD_RMS = 0.045;
+    /** Default motion RMS (m/s²) above which the phone counts as in a hand. */
+    public static final double DEFAULT_HELD_RMS = 0.12;
     /** How long the phone stays "held" after motion drops below the floor. */
     private static final long HELD_HOLD_NS = 1_500_000_000L;
 
+    private double heldRms = DEFAULT_HELD_RMS;
     private double gx, gy, gz;
     private double jitterSq;
     private long lastNs = -1;
     private long heldUntilNs = -1;
     private int samples;
+
+    public void setHeldRms(double rms) {
+        heldRms = rms;
+    }
 
     public void reset() {
         lastNs = -1;
@@ -54,7 +59,7 @@ public final class PostureDetector {
         double b = dt / (JITTER_TAU_S + dt);
         jitterSq += b * ((lx * lx + ly * ly + lz * lz) - jitterSq);
         samples++;
-        if (samples > 10 && jitter() > HELD_RMS) {
+        if (samples > 10 && jitter() > heldRms) {
             heldUntilNs = timestampNs + HELD_HOLD_NS;
         }
     }

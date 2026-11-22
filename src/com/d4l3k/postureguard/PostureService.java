@@ -117,6 +117,7 @@ public final class PostureService extends Service implements SensorEventListener
     private void loadPrefs() {
         threshold = Prefs.threshold(this);
         delaySec = Prefs.delay(this);
+        detector.setHeldRms(Prefs.heldRms(this));
     }
 
     private void startListening() {

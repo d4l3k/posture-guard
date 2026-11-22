@@ -22,7 +22,8 @@ import android.widget.TextView;
 public final class MainActivity extends Activity implements SensorEventListener {
     private final PostureDetector detector = new PostureDetector();
     private SensorManager sensors;
-    private TextView angle, state, thresholdLabel, delayLabel;
+    private TextView angle, state, thresholdLabel, delayLabel, heldLabel;
+    private SeekBar heldBar;
     private Button toggle;
 
     @Override
@@ -76,6 +77,27 @@ public final class MainActivity extends Activity implements SensorEventListener 
             updateLabels();
         }));
         root.addView(delay, match());
+
+        heldLabel = new TextView(this);
+        heldLabel.setPadding(0, pad, 0, 0);
+        root.addView(heldLabel, match());
+        heldBar = new SeekBar(this);
+        heldBar.setMax(Prefs.MAX_HELD_MILLI - Prefs.MIN_HELD_MILLI);
+        heldBar.setOnSeekBarChangeListener(new Changed(v -> setHeldMilli(v + Prefs.MIN_HELD_MILLI)));
+        root.addView(heldBar, match());
+        Button calibrate = new Button(this);
+        calibrate.setText("Calibrate: phone is resting now");
+        calibrate.setOnClickListener(v -> {
+            // Twice the resting noise floor, so stands and tables never count as held.
+            int milli = (int) Math.round(detector.jitter() * 2000);
+            setHeldMilli(Math.max(milli, Prefs.MIN_HELD_MILLI));
+        });
+        root.addView(calibrate, match());
+        TextView calHelp = new TextView(this);
+        calHelp.setText("Put the phone on its stand or a table, wait a few seconds, then tap "
+                + "Calibrate. Or drag the slider until the screen says Resting on the stand "
+                + "and In hand when you pick it up.");
+        root.addView(calHelp, match());
 
         toggle = new Button(this);
         LinearLayout.LayoutParams lp = match();
@@ -143,7 +165,17 @@ public final class MainActivity extends Activity implements SensorEventListener 
         toggle.setText(Prefs.enabled(this) ? "Stop monitoring" : "Start monitoring");
     }
 
+    private void setHeldMilli(int milli) {
+        milli = Math.max(Prefs.MIN_HELD_MILLI, Math.min(Prefs.MAX_HELD_MILLI, milli));
+        Prefs.get(this).edit().putInt(Prefs.HELD_MILLI, milli).apply();
+        updateLabels();
+    }
+
     private void updateLabels() {
+        double held = Prefs.heldRms(this);
+        detector.setHeldRms(held);
+        heldBar.setProgress((int) Math.round(held * 1000) - Prefs.MIN_HELD_MILLI);
+        heldLabel.setText(String.format("In-hand motion threshold: %.3f", held));
         thresholdLabel.setText("Warn below: " + Prefs.threshold(this) + "°");
         delayLabel.setText("After: " + Prefs.delay(this) + " s of looking down");
     }
