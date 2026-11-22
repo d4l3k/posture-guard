@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -34,7 +35,7 @@ public final class MainActivity extends Activity implements SensorEventListener 
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(pad, pad * 2, pad, pad);
+        root.setPadding(pad, pad, pad, pad);
 
         angle = new TextView(this);
         angle.setTextSize(72);
@@ -105,8 +106,20 @@ public final class MainActivity extends Activity implements SensorEventListener 
         toggle.setOnClickListener(v -> setEnabled(!Prefs.enabled(this)));
         root.addView(toggle, lp);
 
+        TextView title = new TextView(this);
+        title.setText(R.string.app_name);
+        title.setTextSize(24);
+        root.addView(title, 0, match());
+
         ScrollView scroll = new ScrollView(this);
         scroll.addView(root);
+        // targetSdk 35 draws edge to edge; keep content clear of the status and nav bars.
+        scroll.setOnApplyWindowInsetsListener((v, insets) -> {
+            android.graphics.Insets bars = insets.getInsets(
+                    WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return WindowInsets.CONSUMED;
+        });
         setContentView(scroll);
         updateLabels();
 
