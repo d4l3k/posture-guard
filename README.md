@@ -19,3 +19,11 @@ KEYSTORE=release.jks KEYSTORE_PASSWORD_FILE=release.password ./build.sh
 ```
 
 Output: `build/posture-guard.apk`. Requires Gradle 9.x and Android SDK 36.
+
+## Install
+
+Download `posture-guard.apk` from the [latest release](https://github.com/d4l3k/posture-guard/releases/latest). Requires Android 11+.
+
+## License
+
+MIT
